@@ -3,22 +3,29 @@ services:
     build: .
     ports:
       - '3000:3000'
-    env_file:
-      - .env
+    environment: # change to be your .env 
+      DATABASE_URL: mysql://ict_admin:ict555@db:3306/ICTHotel?allowPublicKeyRetrieval=true
+      JWT_SECRET: secretKey
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: mariadb:10.11
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: nestlab
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+    environment: # change to be your sql user
+      MYSQL_ROOT_PASSWORD: root 
+      MYSQL_DATABASE: ICTHotel
+      MYSQL_USER: ict_admin
+      MYSQL_PASSWORD: ict555
     ports:
       - '3306:3306'
     volumes:
       - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
 volumes:
   mariadb_data:
