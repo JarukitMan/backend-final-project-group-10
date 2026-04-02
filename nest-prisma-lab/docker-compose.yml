@@ -4,7 +4,7 @@ services:
     ports:
       - '3000:3000'
     environment: # change to be your .env 
-      DATABASE_URL: mysql://ict_admin:ict555@db:3306/ICTHotel?allowPublicKeyRetrieval=true
+      DATABASE_URL: mariadb://ict_admin:ict555@db:3306/ICTHotel?allowPublicKeyRetrieval=true
       JWT_SECRET: secretKey
     depends_on:
       db:
@@ -13,10 +13,10 @@ services:
   db:
     image: mariadb:10.11
     environment: # change to be your sql user
-      MYSQL_ROOT_PASSWORD: root 
-      MYSQL_DATABASE: ICTHotel
-      MYSQL_USER: ict_admin
-      MYSQL_PASSWORD: ict555
+      MARIADB_ROOT_PASSWORD: root 
+      MARIADB_DATABASE: ICTHotel
+      MARIADB_USER: ict_admin
+      MARIADB_PASSWORD: ict555
     ports:
       - '3306:3306'
     volumes:
