@@ -13,10 +13,10 @@ services:
   db:
     image: mariadb:10.11
     environment: # change to be your sql user
-      MYSQL_ROOT_PASSWORD: root 
-      MYSQL_DATABASE: ICTHotel
-      MYSQL_USER: ict_admin
-      MYSQL_PASSWORD: ict555
+      MARIADB_ROOT_PASSWORD: root 
+      MARIADB_DATABASE: ICTHotel
+      MARIADB_USER: ict_admin
+      MARIADB_PASSWORD: ict555
     ports:
       - '3306:3306'
     volumes:
