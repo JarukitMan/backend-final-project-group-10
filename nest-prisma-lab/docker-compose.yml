@@ -4,7 +4,7 @@ services:
     ports:
       - '3000:3000'
     environment: # change to be your .env 
-      DATABASE_URL: mariadb://ict_admin:ict555@db:3306/ICTHotel?allowPublicKeyRetrieval=true
+      DATABASE_URL: mysql://ict_admin:ict555@db:3306/ICTHotel?allowPublicKeyRetrieval=true
       JWT_SECRET: secretKey
     depends_on:
       db:
