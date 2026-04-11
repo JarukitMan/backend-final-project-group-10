@@ -1,0 +1,22 @@
+stages:
+  - deploy
+
+deploy_to_server:
+  stage: deploy
+  image: alpine
+  only:
+    - main
+  before_script:
+    - apk add --no-cache openssh-client bash docker
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
+  script:
+    - cd nest-prisma-lab
+    - echo "DATABASE_URL=$DATABASE_URL\nJWT_SECRET=$JWT_SECRET" > .env
+    - docker compose build
+    - docker tag nest-prisma-lab-app jarukitman/backend-project
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+    - docker push $DOCKERHUB_REPO
+    - ssh "$SERVER_USER@$SERVER_HOST" "cd $SERVER_PATH; docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; docker pull $DOCKERHUB_REPO; docker run $DOCKERHUB_REPO -d; docker logout"
