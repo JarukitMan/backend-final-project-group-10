@@ -32,7 +32,7 @@ deploy_to_server:
     - echo "DATABASE_URL=$DATABASE_URL\nJWT_SECRET=$JWT_SECRET" > .env
     - echo "Starting Build..."
     # - docker compose up --build -d
-    - docker build -t "$DOCKERHUB_REPO" .
+    - export DOCKER_HOST=tcp://127.0.0.1:2375 && docker build --pull -t "$DOCKERHUB_REPO" .
     # - echo "Tagging built image..."
     # - docker tag nest-prisma-lab-app $DOCKERHUB_REPO
     - echo "Pushing to Dockerhub..."
