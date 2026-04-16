@@ -28,6 +28,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.3.0",
     "@nestjs/throttler": "^6.5.0",
     "@prisma/adapter-mariadb": "^7.4.0",
     "@prisma/client": "^7.4.0",
@@ -36,13 +37,14 @@
     "cache-manager": "^7.2.8",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
-    "dotenv": "^17.3.1",
+    "dotenv": "^17.4.2",
     "keyv": "^5.6.0",
     "passport-jwt": "^4.0.1",
     "prisma": "^7.3.0",
     "redis": "^5.11.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
