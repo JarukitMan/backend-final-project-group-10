@@ -27,7 +27,7 @@ describe('NotificationsService', () => {
     const result = await service.createEvent({
       userId: 10,
       bookingId: 22,
-      type: 'BOOKING_CREATED',
+      type: 'CREATED',
       title: 'Booking created',
       message: 'Booking #22 created',
     });

@@ -17,3 +17,29 @@ export class NotificationQueryDto {
   @IsBoolean()
   unreadOnly?: boolean = false;
 }
+
+export type NotificationTypeDto = 'CREATED' | 'CANCELLED';
+
+export type NotificationItemDto = {
+  id: number;
+  user_id: number;
+  booking_id: number | null;
+  type: NotificationTypeDto;
+  title: string;
+  message: string;
+  is_read: boolean;
+  read_at: Date | null;
+  created_at: Date;
+};
+
+export type NotificationPaginationDto = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+};
+
+export type NotificationListResponseDto = {
+  data: NotificationItemDto[];
+  pagination: NotificationPaginationDto;
+};

@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import {
+  NotificationListResponseDto,
+  NotificationTypeDto,
+} from './dto/notification-query.dto';
 
 @Injectable()
 export class NotificationsService {
@@ -8,7 +12,7 @@ export class NotificationsService {
   async createEvent(params: {
     userId: number;
     bookingId?: number;
-    type: 'BOOKING_CREATED' | 'BOOKING_CANCELLED' | 'BOOKING_STATUS_UPDATED';
+    type: NotificationTypeDto;
     title: string;
     message: string;
   }) {
@@ -23,7 +27,12 @@ export class NotificationsService {
     });
   }
 
-  async findMine(userId: number, page = 1, limit = 10, unreadOnly = false) {
+  async findMine(
+    userId: number,
+    page = 1,
+    limit = 10,
+    unreadOnly = false,
+  ): Promise<NotificationListResponseDto> {
     const safePage = Math.max(1, page);
     const safeLimit = Math.min(50, Math.max(1, limit));
     const skip = (safePage - 1) * safeLimit;
@@ -80,10 +89,7 @@ export class NotificationsService {
       },
     });
 
-    return {
-      message: 'All notifications marked as read',
-      updatedCount: result.count,
-    };
+    return result;
   }
 
   async unreadCount(userId: number) {
