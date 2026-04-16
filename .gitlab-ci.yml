@@ -5,7 +5,12 @@ deploy_to_server:
   stage: deploy
   image: docker
   variables:
-    DOCKER_TLS_CERTDIR: ""
+    # Source - https://stackoverflow.com/a/75125264
+    # Posted by Ole
+    # Retrieved 2026-04-16, License - CC BY-SA 4.0
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: "/certs"
+
   services:
     - name: docker:dind
       alias: docker
