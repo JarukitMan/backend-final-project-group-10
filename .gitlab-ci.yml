@@ -7,6 +7,10 @@ deploy_to_server:
   services:
     - name: docker:dind
       alias: docker
+  variables:
+    # Tell docker CLI how to talk to Docker daemon; see
+    # https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#use-docker-in-docker-executor
+    DOCKER_HOST: tcp://10.34.112.171:2375/
   # before_script:
   #   - echo "Installing dependencies..."
   #   - apk add --no-cache docker docker-compose
@@ -22,9 +26,9 @@ deploy_to_server:
   #   - echo "Starting Docker daemon..."
   #   - systemctl start docker
   #   - echo "Pre-script done."
+  script:
     - echo "Logging into Dockerhub..."
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-  script:
     - echo "Entering source folder..."
     - cd nest-prisma-lab
     - echo "Creating .env..."
