@@ -3,39 +3,35 @@ stages:
 
 deploy_to_server:
   stage: deploy
-  image: ubuntu
-  before_script:
-    - echo "Installing dependencies..."
-    - echo nameserver 127.0.0.1 > /etc/resolv.conf
-    - apt-get update
-    - apt-get -qy full-upgrade
-    - apt-get install -qy curl
-    - apt-get install -qy curl
-    - curl -sSL https://get.docker.com/ | sh
-    - echo "Creating the .ssh folder..."
-    - mkdir -p ~/.ssh
-    - echo "Putting the SSH Private key in the wallet..."
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-    - echo "Changing the permissions for the SSH Private key..."
-    - chmod 600 ~/.ssh/id_ed25519
-    # - echo "Starting SSH key scan..."
-    # - ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
-    - echo "Starting Docker daemon..."
-    - systemctl start docker
-    - echo "Pre-script done."
+  image: docker:27
+  # before_script:
+  #   - echo "Installing dependencies..."
+  #   - apk add --no-cache docker docker-compose
+  #   - service docker start
+  #   - echo "Creating the .ssh folder..."
+  #   - mkdir -p ~/.ssh
+  #   - echo "Putting the SSH Private key in the wallet..."
+  #   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+  #   - echo "Changing the permissions for the SSH Private key..."
+  #   - chmod 600 ~/.ssh/id_ed25519
+  #   # - echo "Starting SSH key scan..."
+  #   # - ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
+  #   - echo "Starting Docker daemon..."
+  #   - systemctl start docker
+  #   - echo "Pre-script done."
   script:
     - echo "Entering source folder..."
     - cd nest-prisma-lab
     - echo "Creating .env..."
     - echo "DATABASE_URL=$DATABASE_URL\nJWT_SECRET=$JWT_SECRET" > .env
     - echo "Starting Build..."
-    - docker compose build
+    - docker compose up --build -d
     - echo "Tagging built image..."
     - docker tag nest-prisma-lab-app jarukitman/backend-project
     - echo "Logging into Dockerhub..."
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
     - echo "Pushing to Dockerhub..."
     - docker push $DOCKERHUB_REPO
-    - echo "Deploying on the server..."
-    - ssh "$SERVER_USER@$SERVER_HOST" "cd $SERVER_PATH; docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; docker pull $DOCKERHUB_REPO; docker run $DOCKERHUB_REPO -d; docker logout"
-    - echo "Script done."
+    # - echo "Deploying on the server..."
+    # - ssh "$SERVER_USER@$SERVER_HOST" "cd $SERVER_PATH; docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; docker pull $DOCKERHUB_REPO; docker run $DOCKERHUB_REPO -d; docker logout"
+    # - echo "Script done."
