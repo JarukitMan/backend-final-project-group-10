@@ -7,7 +7,7 @@ import {
 
 @Injectable()
 export class NotificationsService {
-  constructor(private readonly prisma: PrismaService | any) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async createEvent(params: {
     userId: number;

@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConsoleLogger, ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,16 +14,15 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new ResponseInterceptor());
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Nest Prisma Lab API')
+    .setDescription('API documentation')
+    .setVersion('1.0')
+    .build();
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, swaggerDocument);
   
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
-/*
-AI Declaration:
-No Generative AI tools were used for this lab.
-All code was written manually by the student.
-
-Reflection:
-I left throttler on and that took like 10 minutes of my time. Embarrassing.
-But hey, at least now I don't have to test the throttler again.
-*/
