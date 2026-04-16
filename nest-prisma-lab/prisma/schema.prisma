@@ -6,6 +6,11 @@ datasource db {
   provider = "mysql"
 }
 
+enum notification_type {
+  CREATED
+  CANCELLED
+}
+
 model rooms {
   id              Int       @id @default(autoincrement())
   name            String    @db.VarChar(100)
@@ -19,8 +24,25 @@ model rooms {
 }
 
 model users {
-  id       Int     @id @default(autoincrement())
-  name     String? @unique(map: "name") @db.VarChar(80)
-  password String  @db.VarChar(888)
-  role     String? @db.VarChar(8)
+  id            Int             @id @default(autoincrement())
+  name          String?         @unique(map: "name") @db.VarChar(80)
+  password      String          @db.VarChar(888)
+  role          String?         @db.VarChar(8)
+  notifications notifications[]
+}
+
+model notifications {
+  id         Int               @id @default(autoincrement())
+  user_id    Int
+  booking_id Int?
+  type       notification_type
+  title      String            @db.VarChar(120)
+  message    String            @db.VarChar(500)
+  is_read    Boolean           @default(false)
+  read_at    DateTime?         @db.DateTime(0)
+  created_at DateTime          @default(now()) @db.DateTime(0)
+  user       users             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, is_read, created_at])
+  @@index([booking_id])
 }
