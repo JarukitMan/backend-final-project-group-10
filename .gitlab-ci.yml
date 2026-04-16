@@ -1,6 +1,13 @@
 stages:
   - deploy
 
+# Source - https://stackoverflow.com/a/79555578
+# Posted by Sooareszy (Thank you Sooareszy)
+# Retrieved 2026-04-16, License - CC BY-SA 4.0
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_HOST: tcp://host.docker.internal:2375
+
 deploy_to_server:
   stage: deploy
   image: docker:27
