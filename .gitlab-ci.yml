@@ -6,11 +6,11 @@ stages:
 # Retrieved 2026-04-16, License - CC BY-SA 4.0
 variables:
   DOCKER_TLS_CERTDIR: ""
-  DOCKER_HOST: tcp://host.docker.internal:2375
+  DOCKER_HOST: "unix:///var/run/docker.sock"
 
 deploy_to_server:
   stage: deploy
-  image: docker:27
+  image: docker
   # before_script:
   #   - echo "Installing dependencies..."
   #   - apk add --no-cache docker docker-compose
