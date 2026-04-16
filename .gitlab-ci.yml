@@ -3,9 +3,9 @@ stages:
 
 deploy_to_server:
   stage: deploy
-  image: docker:28.0.4
+  image: docker
   services:
-    - name: docker:28.0.4-dind
+    - name: docker:dind
       alias: docker
   # before_script:
   #   - echo "Installing dependencies..."
@@ -22,9 +22,9 @@ deploy_to_server:
   #   - echo "Starting Docker daemon..."
   #   - systemctl start docker
   #   - echo "Pre-script done."
-  script:
     - echo "Logging into Dockerhub..."
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
     - echo "Entering source folder..."
     - cd nest-prisma-lab
     - echo "Creating .env..."
