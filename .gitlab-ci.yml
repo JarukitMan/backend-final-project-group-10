@@ -6,7 +6,8 @@ deploy_to_server:
   image: archlinux
   before_script:
     - echo "Installing dependencies..."
-    - pacman -S openssh docker docker-compose
+    - pacman -Sy
+    - pacman -S --noconfirm openssh docker docker-compose
     - echo "Creating the .ssh folder..."
     - mkdir -p ~/.ssh
     - echo "Putting the SSH Private key in the wallet..."
