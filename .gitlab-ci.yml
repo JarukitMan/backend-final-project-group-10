@@ -16,7 +16,7 @@ deploy_to_server:
     # - echo "Starting SSH key scan..."
     # - ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
     - echo "Starting Docker daemon..."
-    - service docker start
+    - rc-service docker start
     - echo "Pre-script done."
   script:
     - echo "Entering source folder..."
