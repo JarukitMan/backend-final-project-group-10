@@ -3,9 +3,9 @@ stages:
 
 deploy_to_server:
   stage: deploy
-  image: docker
+  image: docker:28.0.4
   services:
-    - name: docker:dind
+    - name: docker:28.0.4-dind
       alias: docker
   # before_script:
   #   - echo "Installing dependencies..."
