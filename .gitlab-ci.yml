@@ -6,7 +6,8 @@ deploy_to_server:
   image: ubuntu
   before_script:
     - echo "Installing dependencies..."
-    - apt-get update
+    - echo nameserver 127.0.0.1 >> /etc/resolv.conf
+    - apt-get update -y
     - apt-get -qy full-upgrade
     - apt-get install -qy curl
     - apt-get install -qy curl
