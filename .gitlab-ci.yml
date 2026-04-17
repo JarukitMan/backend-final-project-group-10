@@ -7,6 +7,7 @@ build:
   image: node:20-alpine
   before_script:
     - cd nest-prisma-lab
+    - echo "JWT_SECRET=$JWT_SECRET\nDATABASE_URL=$DATABASE_URL" > .env
     - npm install
     - npx prisma db push --accept-data-loss
     - npx prisma generate
