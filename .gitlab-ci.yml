@@ -3,35 +3,19 @@ stages:
 
 deploy_to_server:
   stage: deploy
-  image: docker
-  variables:
-    # Source - https://stackoverflow.com/a/75125264
-    # Posted by Ole
-    # Retrieved 2026-04-16, License - CC BY-SA 4.0
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: "/certs"
-    DOCKER_HOST: "tcp://localhost:2375"
-
-  services:
-    - name: docker
-      entrypoint: ["dockerd-entrypoint.sh", "--tls=false", "-v", "/var/run/docker.sock:/var/run/docker.sock"]
+  image: alpine
   before_script:
-    - echo "Logging into Dockerhub..."
-    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-    - echo "Test if Dockerd is running..."
-    - ps aux | grep dockerd
+    - apk add --no-cache openssh-client bash
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
   script:
     - echo "Entering source folder..."
     - cd nest-prisma-lab
     - echo "Creating .env..."
     - echo "DATABASE_URL=$DATABASE_URL\nJWT_SECRET=$JWT_SECRET" > .env
-    - echo "Starting Build..."
-    - docker compose up --build -d
-    # - docker build --pull -t "$DOCKERHUB_REPO" .
-    - echo "Tagging built image..."
-    - docker tag nest-prisma-lab-app $DOCKERHUB_REPO
-    - echo "Pushing to Dockerhub..."
-    - docker push $DOCKERHUB_REPO
     - echo "Deploying on the server..."
-    - ssh "$SERVER_USER@$SERVER_HOST" "cd $SERVER_PATH; docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; docker pull $DOCKERHUB_REPO; docker run $DOCKERHUB_REPO -d; docker logout"
+    - scp -r . "$SERVER_USER@$SERVER_HOST:$SERVER_PATH"
+    - ssh "$SERVER_USER@$SERVER_HOST" "cd $SERVER_PATH; docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; docker build --pull -t $DOCKERHUB_REPO; docker run $DOCKERHUB_REPO -d; docker push $DOCKERHUB_REPO; docker logout"
     - echo "Script done."
