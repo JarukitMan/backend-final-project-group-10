@@ -9,14 +9,13 @@ deploy_to_server:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
-    - echo "$SERVER_HOST"
-    # - ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
+    - ssh-keyscan -H 10.34.112.171 >> ~/.ssh/known_hosts
   script:
     - echo "Entering source folder..."
     - cd nest-prisma-lab
     - echo "Creating .env..."
     - echo "DATABASE_URL=$DATABASE_URL\nJWT_SECRET=$JWT_SECRET" > .env
     - echo "Deploying on the server..."
-    - scp -r . "$SERVER_USER@$SERVER_HOST:$SERVER_PATH"
-    - ssh "$SERVER_USER@$SERVER_HOST" "cd $SERVER_PATH; docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; docker build --pull -t $DOCKERHUB_REPO; docker run $DOCKERHUB_REPO -d; docker push $DOCKERHUB_REPO; docker logout"
+    - scp -r . "student@10.34.112.171:/home/student/Websites/deploy/"
+    - ssh "student@10.34.112.171" "cd /home/student/Websites/deploy/; docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; docker build --pull -t $DOCKERHUB_REPO; docker run $DOCKERHUB_REPO -d; docker push $DOCKERHUB_REPO; docker logout"
     - echo "Script done."
