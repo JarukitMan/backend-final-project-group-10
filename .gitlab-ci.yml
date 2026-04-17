@@ -9,6 +9,7 @@ deploy_to_server:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
+    - echo "$SERVER_HOST"
     # - ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
   script:
     - echo "Entering source folder..."
