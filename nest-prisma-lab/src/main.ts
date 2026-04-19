@@ -15,13 +15,19 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new ResponseInterceptor());
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('Nest Prisma Lab API')
-    .setDescription('API documentation')
-    .setVersion('1.0')
-    .build();
-  const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, swaggerDocument);
+  const config = new DocumentBuilder()
+    .setTitle('Hotel Booking System API')
+    .setDescription('Include information about the Room management, Booking management, Notification management and account management APIs, and mention rate limiting (100 requests per minute)')
+    .setVersion('1.0.0')
+    .addTag('rooms')
+    .addTag('bookings')
+    .addTag('auth')
+    .addTag('notifications')
+    .addBearerAuth({name: 'Jwt', type: 'http'})
+    .build()
+
+  const document = SwaggerModule.createDocument(app, config)
+  SwaggerModule.setup('docs', app, document, { swaggerOptions: { persistAuthorization: true } })
   
   await app.listen(process.env.PORT ?? 3000);
 }
