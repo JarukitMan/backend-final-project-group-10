@@ -17,6 +17,6 @@ deploy_to_server:
     - echo "DATABASE_URL=$DATABASE_URL\nJWT_SECRET=$JWT_SECRET" > .env
     - echo "Deploying on the server..."
     - scp -r . "$SERVER_USER@$SERVER_HOST:$SERVER_PATH"
-    - ssh "$SERVER_USER@$SERVER_HOST" "cd $SERVER_PATH; docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; docker build --pull -t $DOCKERHUB_REPO; docker stop app; docker rm app; docker run --name app -p 3000:3000 -d $DOCKERHUB_REPO; docker push $DOCKERHUB_REPO; docker logout"
+    - ssh "$SERVER_USER@$SERVER_HOST" "cd $SERVER_PATH; docker compose down; docker compose up -d --build"
     # - ssh "$SERVER_USER@$SERVER_HOST" "cd $SERVER_PATH; docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; docker build --pull -t $DOCKERHUB_REPO; docker run -p 3000:3000 -d $DOCKERHUB_REPO; docker push $DOCKERHUB_REPO; docker logout"
     - echo "Script done."
