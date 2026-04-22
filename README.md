@@ -21,7 +21,8 @@ Dependencies: Bourne shell, NPM (Node Package Manager), NodeJS, MariaDB
 1. Create a database `ICTHotel` in MariaDB.
 2. Run MariaDB and make sure it is listening to port 3306
 3. Put the link to the database in the `nest-prisma-lab/.env` file in this format: `DATABASE_URL=mysql://{username}:{password}@{database_link}:3306/ICTHotel?allowPublicKeyRetrieval=true`. Replace the bracketed words with the real strings.
-4. run this script:
+4. Put the **SECRET** used to generate tokens in the JWT_SECRET environment variable in `nest-prisma-lab/.env`. `JWT_SECRET=YourSecretKey`
+5. run this script:
     ```
     cd nest-prisma-lab
     npm install
