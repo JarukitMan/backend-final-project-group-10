@@ -1,0 +1,81 @@
+import { Injectable, Logger, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { BookDto } from './dto/book.dto';
+import { UnbookDto } from './dto/unbook.dto';
+import { Request } from 'express';
+import { EditBookingDto } from './dto/edit-booking.dto';
+
+@Injectable()
+export class BookingService {
+  private readonly logger = new Logger('RoomsService')
+  constructor(private readonly prisma: PrismaService, private readonly jwt: JwtService) {}
+
+  async book(req: Request, dto: BookDto) {
+    this.logger.log('book')
+    const user_id = this.get_user_id(req)
+    const {room_id, start_date, end_date} = dto
+    // Just findFirst our start < start < our end | start < our end < end and create a booking if it doesn't exist.
+    if (!await this.prisma.bookings.findFirst(
+      {
+        where: {
+          OR: [
+            { AND: [
+                { start_date: { lte: dto.end_date } },
+                { end_date: { gte: dto.end_date } }
+              ]
+            },
+            { AND: [
+                { start_date: { gte: dto.start_date } },
+                { start_date: { lte: dto.end_date } }
+              ]
+            }
+          ]
+        }
+      }
+    )) return this.prisma.bookings.create({data: {user_id, room_id, start_date, end_date}})
+    else throw new NotAcceptableException('This booking overlaps with a pre-existing booking.')
+  }
+
+  async unbook(req: Request, dto: UnbookDto) {
+    this.logger.log('unbook')
+    const user_id = this.get_user_id(req)
+    const id = dto.room_id
+    // If it's not there, punch the user and steal their riches.
+    if (!await this.prisma.bookings.findFirst({where: {id, user_id}}))
+    throw new NotFoundException('Booking Not Found')
+
+    return this.prisma.bookings.delete({where: {id, user_id}})
+  }
+
+  my_bookings(req: Request) {
+    this.logger.log('my_bookings')
+    const id = this.get_user_id(req)
+    return this.prisma.bookings.findMany({where: {id}})
+  }
+
+  all_bookings() {
+    this.logger.log('all_bookings')
+    return this.prisma.bookings.findMany()
+  }
+
+  get_user_id(req: Request): number {
+    const authHeader = req.headers.authorization
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Token not provided');
+    }
+    const token = authHeader.split(' ')[1];
+  
+    // Duplicated ID extraction
+    try {
+      const payload = this.jwt.verify(token, {secret: "ICT88@MU"})
+      return payload.sub
+    } catch (error) {
+      throw new UnauthorizedException('Invalid token');
+    }
+  }
+
+  edit_booking(dto: EditBookingDto) {
+    return this.prisma.bookings.update({data: {status: dto.status}, where: {id: dto.id}})
+  }
+}

@@ -10,6 +10,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import KeyvRedis from '@keyv/redis';
 import { APP_GUARD } from '@nestjs/core';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { APP_GUARD } from '@nestjs/core';
       throttlers: [
         { ttl: 60 * 1000, limit: 30 }
       ]
-    })
+    }),
+    SearchModule
   ],
   controllers: [AppController],
   providers: [
