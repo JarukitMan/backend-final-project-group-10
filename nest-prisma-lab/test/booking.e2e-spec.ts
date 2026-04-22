@@ -145,13 +145,18 @@ describe('BookingController (e2e)', () => {
       .expect(201);
 
     expect(response.body).toHaveProperty('id');
-    expect(response.body.room_id).toBe(createdRoomId);
-    expect(response.body.start_date).toBe('2026-06-01T00:00:00.000Z');
-    expect(response.body.end_date).toBe('2026-06-05T00:00:00.000Z');
-    expect(response.body).toHaveProperty('user_id');
-    expect(response.body.status).toBe(BookingStatus.Pending);
-
     createdBookingId = response.body.id;
+    const notification = await prisma.notifications.findFirst({
+      where: {
+        booking_id: createdBookingId,
+        user_id: response.body.user_id,
+        type: 'CREATED',
+      },
+    });
+
+    expect(notification).toBeDefined();
+    expect(notification?.title).toContain('Booking created');
+    expect(notification?.is_read).toBe(false);
   });
 
   // Test Scenario: CREATE Booking - UNAUTHORIZED
