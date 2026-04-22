@@ -4,8 +4,7 @@ import { SearchService } from './search.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { SearchController } from './search.controller';
 
-@Module({
-  imports: [CacheModule.register()],   
+@Module({  
   controllers: [SearchController],
   providers: [SearchService, PrismaService]
 })
