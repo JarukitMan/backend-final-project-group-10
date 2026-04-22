@@ -1,13 +1,13 @@
-import { Body, Controller, Get, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
-import { Role, Roles } from 'src/roles/roles.decorator';
+import { Body, Controller, Get, Post, Req, UseGuards, UseInterceptors, HttpCode } from '@nestjs/common';
+import { Role, Roles } from '../roles/roles.decorator';
 import { BookDto } from './dto/book.dto';
 import { BookingService } from './booking.service';
 // Err, I did it this way because of the linter.
 import * as e from 'express';
 import { UnbookDto } from './dto/unbook.dto';
-import { JwtAuthGuard } from 'src/auth/auth.guard';
-import { RolesGuard } from 'src/roles/roles.guard';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/auth.guard';
+import { RolesGuard } from '../roles/roles.guard';
+import { ApiTags } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { EditBookingDto } from './dto/edit-booking.dto';
 
@@ -50,6 +50,7 @@ export class BookingController {
   })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('unbook')
+  @HttpCode(200)
   @Roles(Role.User, Role.Admin)
   unbook(@Req() req: e.Request, @Body() dto: UnbookDto) {
     return this.service.unbook(req, dto)
@@ -132,7 +133,8 @@ export class BookingController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin)
   @Post('edit-booking')
-  edit_booking(dto: EditBookingDto) {
+  @HttpCode(200)
+  edit_booking(@Body() dto: EditBookingDto) {
     return this.service.edit_booking(dto)
   }
 }

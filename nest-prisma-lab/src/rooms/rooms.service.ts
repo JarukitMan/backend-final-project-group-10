@@ -92,12 +92,15 @@ async update(id: number, dto: UpdateRoomDto) {
   async remove(id: number) {
     this.logger.log(`executing remove()`);
     try {
-      await this.findARoom(id); 
-      await this.prisma.rooms.delete({ where: { id } });
-      return { message: `Room ${id} deleted successfully` };
-    } catch (e: any) {
-      this.logger.error(`Failed to delete room ${id}: ${e?.message ?? e}`);
-      throw e;
+      const room = await this.findARoom(id);
+      if (!room) {
+      throw new NotFoundException(`Room with id ${id} not found`);
     }
+      await this.prisma.rooms.delete({ where: { id } });
+    return { message: `Room ${id} deleted successfully` };
+  } catch (e: any) {
+    this.logger.error(`Failed to delete room ${id}: ${e?.message ?? e}`);
+    throw e;
   }
+}
 }

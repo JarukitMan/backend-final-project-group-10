@@ -20,6 +20,7 @@ import { BookingModule } from './booking/booking.module';
     AuthModule,
     StatusModule,
     NotificationsModule,
+    BookingModule,
     CacheModule.register({
       isGlobal: true,
       ttl: 15 * 1000 * 60,
