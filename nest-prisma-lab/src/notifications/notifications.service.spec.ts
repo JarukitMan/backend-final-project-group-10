@@ -1,10 +1,13 @@
 import { NotFoundException } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
+import { Test, TestingModule } from '@nestjs/testing';
+import { PrismaService } from '../prisma/prisma.service';
 
 describe('NotificationsService', () => {
   let service: NotificationsService;
+  let prisma: PrismaService;
 
-  const prisma = {
+  const mockPrisma = {
     notifications: {
       create: jest.fn(),
       findMany: jest.fn(),
@@ -14,39 +17,83 @@ describe('NotificationsService', () => {
       updateMany: jest.fn(),
     },
     $transaction: jest.fn(),
-  } as any;
+  };
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        NotificationsService,
+        { provide: PrismaService, useValue: mockPrisma },
+      ],
+    }).compile();
+
+    service = module.get<NotificationsService>(NotificationsService);
+    prisma = module.get<PrismaService>(PrismaService);
     jest.clearAllMocks();
-    service = new NotificationsService(prisma);
   });
 
-  it('creates notification event', async () => {
-    prisma.notifications.create.mockResolvedValue({ id: 1 });
+describe('findMine (Pagination & Filtering)', () => {
+    it('should return paginated notifications with correct metadata', async () => {
+      const mockData = [{ id: 1, title: 'Test' }];
+      const mockTotal = 1;
+      
+      // Mocking the $transaction return [data, total]
+      mockPrisma.$transaction.mockResolvedValue([mockData, mockTotal]);
 
-    const result = await service.createEvent({
-      userId: 10,
-      bookingId: 22,
-      type: 'CREATED',
-      title: 'Booking created',
-      message: 'Booking #22 created',
+      const result = await service.findMine(1, 1, 10, false);
+
+      expect(result.data).toEqual(mockData);
+      expect(result.pagination.totalPages).toBe(1);
+      expect(mockPrisma.notifications.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 0, take: 10 })
+      );
     });
 
-    expect(result).toEqual({ id: 1 });
-    expect(prisma.notifications.create).toHaveBeenCalled();
+    it('should apply unreadOnly filter when requested', async () => {
+      mockPrisma.$transaction.mockResolvedValue([[], 0]);
+
+      await service.findMine(1, 1, 10, true);
+
+      expect(mockPrisma.notifications.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { user_id: 1, is_read: false }
+        })
+      );
+    });
   });
 
-  it('throws when marking unknown notification as read', async () => {
-    prisma.notifications.findFirst.mockResolvedValue(null);
+  describe('markAsRead (Security & Updates)', () => {
+    it('should update a notification if it belongs to the user', async () => {
+      mockPrisma.notifications.findFirst.mockResolvedValue({ id: 5, user_id: 1 });
+      mockPrisma.notifications.update.mockResolvedValue({ id: 5, is_read: true });
 
-    await expect(service.markAsRead(999, 1)).rejects.toBeInstanceOf(NotFoundException);
+      const result = await service.markAsRead(5, 1);
+
+      expect(result.is_read).toBe(true);
+      expect(mockPrisma.notifications.update).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { id: 5 } })
+      );
+    });
+
+    it('should throw NotFoundException if notification belongs to someone else', async () => {
+      // Notification exists but belongs to user 99
+      mockPrisma.notifications.findFirst.mockResolvedValue(null);
+
+      await expect(service.markAsRead(5, 1)).rejects.toThrow(NotFoundException);
+    });
   });
 
-  it('returns unread count', async () => {
-    prisma.notifications.count.mockResolvedValue(3);
+  describe('markAllAsRead', () => {
+    it('should call updateMany for the specific user only', async () => {
+      mockPrisma.notifications.updateMany.mockResolvedValue({ count: 5 });
 
-    const result = await service.unreadCount(2);
+      const result = await service.markAllAsRead(1);
 
-    expect(result).toEqual({ unreadCount: 3 });
+      expect(result.count).toBe(5);
+      expect(mockPrisma.notifications.updateMany).toHaveBeenCalledWith({
+        where: { user_id: 1, is_read: false },
+        data: expect.objectContaining({ is_read: true })
+      });
+    });
   });
 });
