@@ -122,6 +122,7 @@ export class BookingController {
   @ApiResponse({
     status: 201,
     description: 'Booking edited successfully',
+    type: EditBookingDto,
     schema: {type: "object", properties: {success: { type: "boolean", example: true }}}
   })
   @ApiResponse({
