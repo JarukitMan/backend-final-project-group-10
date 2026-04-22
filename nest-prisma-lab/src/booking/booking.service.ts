@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotAcceptableException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { BookDto } from './dto/book.dto';
 import { UnbookDto } from './dto/unbook.dto';
 import { Request } from 'express';
@@ -40,18 +40,19 @@ export class BookingService {
   async unbook(req: Request, dto: UnbookDto) {
     this.logger.log('unbook')
     const user_id = this.get_user_id(req)
-    const id = dto.room_id
+    const room_id = dto.room_id
     // If it's not there, punch the user and steal their riches.
-    if (!await this.prisma.bookings.findFirst({where: {id, user_id}}))
+    const booking = await this.prisma.bookings.findFirst({where: {room_id, user_id}})
+    if (!booking)
     throw new NotFoundException('Booking Not Found')
 
-    return this.prisma.bookings.delete({where: {id, user_id}})
+    return this.prisma.bookings.delete({where: {id: booking.id}})
   }
 
   my_bookings(req: Request) {
     this.logger.log('my_bookings')
-    const id = this.get_user_id(req)
-    return this.prisma.bookings.findMany({where: {id}})
+    const user_id = this.get_user_id(req)
+    return this.prisma.bookings.findMany({where: {user_id}})
   }
 
   all_bookings() {
