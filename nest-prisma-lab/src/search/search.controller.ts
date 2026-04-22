@@ -1,17 +1,16 @@
-import { Body, Controller, Get, Query, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Query, UseInterceptors } from '@nestjs/common';
 import { SearchService } from './search.service';
-import { SearchQueryDto } from './dto/search-query.dto'; 
 import { CacheInterceptor } from '@nestjs/cache-manager';
-import {  ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import {  ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Decimal } from '@prisma/client/runtime/client';
 
 @Controller('search')
 @UseInterceptors(CacheInterceptor)
+@ApiTags('search')
 // Conscious decision not to require login. I'd be unwilling to use a service that requires me to log in to search.
 export class SearchController {
   constructor(private readonly search: SearchService) {}
 
-  @ApiOperation({ summary: 'Retrieve all rooms' })
   @ApiOperation({summary: "Retrieve all rooms that pass the search query"})
   @ApiResponse({
     status: 200,
