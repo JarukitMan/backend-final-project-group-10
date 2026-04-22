@@ -1,18 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe, UseGuards, Delete, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, ParseIntPipe, UseGuards, Delete } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../roles/roles.guard';
 import { Role, Roles } from '../roles/roles.decorator';
-import { CacheInterceptor } from '@nestjs/cache-manager';
 import { Throttle } from '@nestjs/throttler';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Room } from './entities/room.entity';
 
 @Controller('rooms')
-@UseInterceptors(CacheInterceptor)
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Throttle({ default: { ttl: 60000, limit: 10 } })
 @ApiTags('rooms')
 export class RoomsController {
@@ -39,7 +36,6 @@ export class RoomsController {
   }
 
   @Get()
-  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Get all rooms' })
   @ApiResponse({ status: 200, description: 'Return all rooms' })
   findAll() {
@@ -147,6 +143,3 @@ export class RoomsController {
     return await this.roomsService.update(id, updateRoomDto);
   }
 }
-
-
-
