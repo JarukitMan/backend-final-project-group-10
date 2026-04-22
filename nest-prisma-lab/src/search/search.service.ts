@@ -28,6 +28,34 @@ export class SearchService {
 
         return room.is_active
       }
+    ).filter(
+      async room => {
+        // Check if room is booked in that date range.
+        // Just findFirst our start < start < our end | start < our end < end and return true if it doesn't exist.
+        if (await this.prisma.bookings.findFirst(
+          {
+            select: {room_id: true},
+            where: {
+              AND: [
+                {room_id: room.id},
+                {OR: [
+                  { AND: [
+                      { start_date: { lte: dto.end_date } },
+                      { end_date: { gte: dto.end_date } }
+                    ]
+                  },
+                  { AND: [
+                      { start_date: { gte: dto.start_date } },
+                      { start_date: { lte: dto.end_date } }
+                    ]
+                  }
+                ]}
+              ]
+            }
+          }
+        )) return false
+        else return true
+      }
     )
   }
 }
