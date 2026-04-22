@@ -14,7 +14,10 @@ describe('BookingService', () => {
     bookings: {
       findFirst: jest.fn(),
       create: jest.fn(),
+      findMany: jest.fn(),
+      delete: jest.fn()
     },
+    notifications: { create: jest.fn() },
   };
 
   const mockJwt = {
@@ -84,7 +87,7 @@ describe('BookingService', () => {
 
     describe('unbook', () => {
       it('should throw NotFoundException if trying to delete someone else\'s booking', async () => {
-        const dto = { room_id: 99 }; 
+        const dto = { room_id: 99 };
         const mockReq = { headers: { authorization: 'Bearer user-1' } };
 
         mockJwt.verify.mockReturnValue({ sub: 1 });
@@ -95,5 +98,48 @@ describe('BookingService', () => {
       });
     });
 
+  });
+
+  describe('Notifications Triggering', () => {
+    it('should trigger a notification when a room is successfully booked', async () => {
+      const dto = { room_id: 1, start_date: new Date(), end_date: new Date() };
+      const mockReq = { headers: { authorization: 'Bearer token' } };
+      const mockBooking = { id: 50, user_id: 1, room_id: 1 };
+
+      mockJwt.verify.mockReturnValue({ sub: 1 });
+      mockPrisma.bookings.findFirst.mockResolvedValue(null);
+      mockPrisma.bookings.create.mockResolvedValue(mockBooking);
+
+      await service.book(mockReq as any, dto as any);
+
+      // Verify Notification Creation
+      expect(mockPrisma.notifications.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          user_id: 1,
+          booking_id: 50,
+          type: 'CREATED',
+          title: expect.stringContaining('Booking created'),
+        }),
+      });
+    });
+
+    it('should trigger a cancellation notification when unbooking', async () => {
+      const mockReq = { headers: { authorization: 'Bearer token' } };
+      const mockBooking = { id: 50, user_id: 1, room_id: 1, start_date: new Date(), end_date: new Date() };
+
+      mockJwt.verify.mockReturnValue({ sub: 1 });
+      mockPrisma.bookings.findFirst.mockResolvedValue(mockBooking);
+      mockPrisma.bookings.delete.mockResolvedValue(mockBooking); // Mock the delete return value
+
+      const result = await service.unbook(mockReq as any, { room_id: 1 });
+
+      expect(result).toEqual(mockBooking); // Now result won't be undefined
+      expect(mockPrisma.notifications.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          type: 'CANCELLED',
+          booking_id: 50,
+        }),
+      });
+    });
   });
 });
