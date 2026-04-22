@@ -3,7 +3,6 @@ import { NotificationsController } from './notifications.controller';
 import { NotificationsService } from './notifications.service';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../roles/roles.guard';
-import { ExecutionContext } from '@nestjs/common';
 
 describe('NotificationsController Integration', () => {
   let controller: NotificationsController;
