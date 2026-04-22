@@ -7,7 +7,7 @@ import * as e from 'express';
 import { UnbookDto } from './dto/unbook.dto';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { RolesGuard } from '../roles/roles.guard';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CacheInterceptor } from '@nestjs/cache-manager';
 import { EditBookingDto } from './dto/edit-booking.dto';
 
