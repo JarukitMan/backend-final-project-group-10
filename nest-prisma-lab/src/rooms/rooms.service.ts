@@ -34,42 +34,10 @@ export class RoomsService {
     }
   }
 
-  async findAll(filters?: {
-    is_active? : boolean;
-    min_price?: number;
-    max_price?: number;
-    min_capacity?: number;
-    limit?: number;
-    offset?: number;
-  } ) {
-    this.logger.log(`executing findAll()`)
-    const where: any = {}
-
-    if(filters?.is_active !== undefined){
-      where.is_active = filters.is_active;
-    }
-
-    if(filters?.min_price !== undefined || filters?.max_price !== undefined) {
-      where.price_per_night = {};
-      if (filters?.min_price !== undefined) where.price_per_night.gte = filters.min_price;
-      if(filters?.max_price !== undefined) where.price_per_night.lte = filters.max_price;
-    }
-    if(filters?.min_capacity !== undefined) {
-      where.capacity = { gte: filters.min_capacity};
-    }
-    const limit = filters?.limit ?? 10;
-    const offset = filters?.offset ?? 0;
-
-    const [data, total] = await Promise.all([
-      this.prisma.rooms.findMany({
-        where,
-        take: limit,
-        skip: offset,
-      }),
-      this.prisma.rooms.count({ where}),
-    ]);
-    return {data, total, limit, offset};
-  }
+findAll() {
+  this.logger.log("Find all rooms (naive)");
+  return this.prisma.rooms.findMany();
+}
 
   async findARoom(id: number) {
     this.logger.log("Find one")

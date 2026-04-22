@@ -39,69 +39,78 @@ export class RoomsController {
   }
 
   // public
-  @ApiBearerAuth('access-token')
-  @CacheTTL(30000) // Cache for 30 seconds
-  @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.User)
-  @Get()
-  @Throttle({ default: { limit: 10, ttl: 60 * 1000 } })
+  // @ApiBearerAuth('access-token')
+  // @CacheTTL(30000) 
+  // @Get()
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(Role.Admin, Role.User)
+  // @Get()
+  // @Throttle({ default: { limit: 10, ttl: 60 * 1000 } })
 
-  @ApiOperation({ summary: 'Retrieve all rooms' })
-  @ApiQuery({ name: 'is_active', required: false, type: Boolean, description: 'Filter by active status', example: true })
-  @ApiQuery({ name: 'min_price', required: false, type: Number, description: 'Minimum price per night', example: 1000 })
-  @ApiQuery({ name: 'max_price', required: false, type: Number, description: 'Maximum price per night', example: 5000 })
-  @ApiQuery({ name: 'min_capacity', required: false, type: Number, description: 'Minimum room capacity', example: 2 })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of results per page', example: 10 })
-  @ApiQuery({ name: 'offset', required: false, type: Number, description: 'Number of results to skip', example: 0 })
-  @ApiOperation({summary: "Retrieve all rooms"})
-  @ApiResponse({
-    status: 200,
-    description: 'List of all rooms',
-    schema: {
-      type: 'object',
-      properties: {
-        data: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              id: { type: 'number', example: 1 },
-              name: { type: 'string', example: 'Deluxe Room 201' },
-              description: { type: 'string', example: 'Deluxe room with city view' },
-              capacity: { type: 'number', example: 2 },
-              price_per_night: { type: 'number', example: 2800 },
-              image_url: { type: 'string', example: '/images/room201.jpg' },
-              is_active: { type: 'boolean', example: true },
-              created_at: { type: 'string', example: '2026-03-20T01:02:55.000Z' },
-              updated_at: { type: 'string', example: '2026-03-20T01:02:55.000Z' },
-            },
-          },
-        },
-        total: { type: 'number', example: 5 },
-        limit: { type: 'number', example: 10 },
-        offset: { type: 'number', example: 0 },
-      },
-    },
-  })
-  @ApiResponse({ status: 429, description: 'Too Many Requests' })
-  findAll(
-    @Query('is_active') is_active?: string,
-    @Query('min_price') min_price?: string,
-    @Query('max_price') max_price?: string,
-    @Query('min_capacity') min_capacity?: string,
-    @Query('limit') limit?: string,
-    @Query('offset') offset?: string,) {
+  // @ApiOperation({ summary: 'Retrieve all rooms' })
+  // @ApiQuery({ name: 'is_active', required: false, type: Boolean, description: 'Filter by active status', example: true })
+  // @ApiQuery({ name: 'min_price', required: false, type: Number, description: 'Minimum price per night', example: 1000 })
+  // @ApiQuery({ name: 'max_price', required: false, type: Number, description: 'Maximum price per night', example: 5000 })
+  // @ApiQuery({ name: 'min_capacity', required: false, type: Number, description: 'Minimum room capacity', example: 2 })
+  // @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of results per page', example: 10 })
+  // @ApiQuery({ name: 'offset', required: false, type: Number, description: 'Number of results to skip', example: 0 })
+  // @ApiOperation({summary: "Retrieve all rooms"})
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'List of all rooms',
+  //   schema: {
+  //     type: 'object',
+  //     properties: {
+  //       data: {
+  //         type: 'array',
+  //         items: {
+  //           type: 'object',
+  //           properties: {
+  //             id: { type: 'number', example: 1 },
+  //             name: { type: 'string', example: 'Deluxe Room 201' },
+  //             description: { type: 'string', example: 'Deluxe room with city view' },
+  //             capacity: { type: 'number', example: 2 },
+  //             price_per_night: { type: 'number', example: 2800 },
+  //             image_url: { type: 'string', example: '/images/room201.jpg' },
+  //             is_active: { type: 'boolean', example: true },
+  //             created_at: { type: 'string', example: '2026-03-20T01:02:55.000Z' },
+  //             updated_at: { type: 'string', example: '2026-03-20T01:02:55.000Z' },
+  //           },
+  //         },
+  //       },
+  //       total: { type: 'number', example: 5 },
+  //       limit: { type: 'number', example: 10 },
+  //       offset: { type: 'number', example: 0 },
+  //     },
+  //   },
+  // })
+  // @ApiResponse({ status: 429, description: 'Too Many Requests' })
+  // findAll(
+  //   @Query('is_active') is_active?: string,
+  //   @Query('min_price') min_price?: string,
+  //   @Query('max_price') max_price?: string,
+  //   @Query('min_capacity') min_capacity?: string,
+  //   @Query('limit') limit?: string,
+  //   @Query('offset') offset?: string,) {
 
-    return this.roomsService.findAll({
-      is_active: is_active !== undefined ? is_active === 'true' : undefined,
-      min_price: min_price ? Number(min_price) : undefined,
-      max_price: max_price ? Number(max_price) : undefined,
-      min_capacity: min_capacity ? Number(min_capacity) : undefined,
-      limit: limit ? Number(limit) : undefined,
-      offset: offset ? Number(offset) : undefined,
-    });
-  }
+  //   return this.roomsService.findAll({
+  //     is_active: is_active !== undefined ? is_active === 'true' : undefined,
+  //     min_price: min_price ? Number(min_price) : undefined,
+  //     max_price: max_price ? Number(max_price) : undefined,
+  //     min_capacity: min_capacity ? Number(min_capacity) : undefined,
+  //     limit: limit ? Number(limit) : undefined,
+  //     offset: offset ? Number(offset) : undefined,
+  //   });
+  // }
+
+@Get()
+@ApiBearerAuth('access-token')
+@ApiOperation({ summary: 'Get all rooms' })
+@ApiResponse({ status: 200, description: 'Return all rooms' })
+findAll() {
+  // Simply call the naive service method
+  return this.roomsService.findAll();
+}
 
   @ApiBearerAuth('access-token')
   @ApiOperation({summary: "Retrieve one room"})
