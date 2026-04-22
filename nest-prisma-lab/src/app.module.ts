@@ -11,6 +11,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import KeyvRedis from '@keyv/redis';
 import { APP_GUARD } from '@nestjs/core';
 import { SearchModule } from './search/search.module';
+import { BookingModule } from './booking/booking.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { SearchModule } from './search/search.module';
     AuthModule,
     StatusModule,
     NotificationsModule,
+    BookingModule,
     CacheModule.register({
       isGlobal: true,
       ttl: 15 * 1000 * 60,
