@@ -46,3 +46,19 @@ model notifications {
   @@index([user_id, is_read, created_at])
   @@index([booking_id])
 }
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+  PAID
+}
+
+model bookings {
+  id Int @id @default(autoincrement())
+  user_id Int
+  room_id Int
+  start_date DateTime @db.Date
+  end_date DateTime @db.Date
+  status BookingStatus @default(PENDING)
+}
