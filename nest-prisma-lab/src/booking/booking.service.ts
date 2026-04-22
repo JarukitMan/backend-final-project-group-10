@@ -24,8 +24,10 @@ export class BookingService {
           ]
         }
       }
-    )) return this.prisma.bookings.create({data: {user_id, room_id, start_date, end_date}})
-    else throw new NotAcceptableException('This booking overlaps with a pre-existing booking.')
+    )) {
+      const booking = await this.prisma.bookings.create({data: {user_id, room_id, start_date, end_date}})
+      this.prisma.notifications.create({data: {user_id, booking_id: booking.id, type: 'CREATED', title: `Booking created for room ${booking.room_id}`, message: `Booking created for room ${booking.room_id} from ${booking.start_date} to ${booking.end_date}!`}})
+    } else throw new NotAcceptableException('This booking overlaps with a pre-existing booking.')
   }
 
   async unbook(req: Request, dto: UnbookDto) {
@@ -37,6 +39,7 @@ export class BookingService {
     if (!booking)
     throw new NotFoundException('Booking Not Found')
 
+    this.prisma.notifications.create({data: {user_id, booking_id: booking.id, type: 'CANCELLED', title: `Booking cancelled for room ${booking.room_id}!`, message: `Booking for room ${booking.room_id} from ${booking.start_date} to ${booking.end_date} cancelled!`}})
     return this.prisma.bookings.delete({where: {id: booking.id}})
   }
 
@@ -68,6 +71,7 @@ export class BookingService {
   }
 
   edit_booking(dto: EditBookingDto) {
+    // The spec does not require notifications for this kind of action.
     return this.prisma.bookings.update({data: {status: dto.status}, where: {id: dto.id}})
   }
 }
