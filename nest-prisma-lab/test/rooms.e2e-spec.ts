@@ -65,7 +65,7 @@ describe('RoomsController (e2e)', () => {
     // We capture the JWT access_token to use in Authorization headers for subsequent requests.
     const loginResponse = await request(app.getHttpServer())
       .post('/auth/login')
-      .send({ name:seededUsername, password })
+      .send({ username: seededUsername, password })
       .expect(201);
   
     accessToken = loginResponse.body.access_token;

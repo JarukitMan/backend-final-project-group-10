@@ -10,10 +10,21 @@ describe('AppController (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+    .overrideProvider('CACHE_MANAGER')
+    .useValue({
+      get: () => Promise.resolve(null),
+      set: () => Promise.resolve(),
+      del: () => Promise.resolve(),
+    })
+    .compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+  });
+
+  afterEach(async () => {
+    await app.close();
   });
 
   it('/ (GET)', () => {
