@@ -1,5 +1,5 @@
 import { Decimal } from "@prisma/client/runtime/index-browser";
-import { IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type, Transform } from "class-transformer";
 
@@ -53,7 +53,7 @@ export class SearchQueryDto {
   @ApiPropertyOptional({ description: 'Maximum price', example: 10000 })
   max_price_per_night?: Decimal;
   @Type(() => Date)
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
   @ApiProperty({
     description: 'Start of the date range the room needs to be available.',
@@ -61,7 +61,7 @@ export class SearchQueryDto {
   })
   start_date!: Date;
   @Type(() => Date)
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
   @ApiProperty({
     description: 'End of the date range the room needs to be available.',

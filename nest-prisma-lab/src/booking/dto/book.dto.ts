@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsDate, IsNotEmpty, IsNumber } from "class-validator"
+import { IsDateString, IsNotEmpty, IsNumber } from "class-validator"
 
 export class BookDto {
   @IsNumber()
@@ -9,14 +9,14 @@ export class BookDto {
     example: '1'
   })
   room_id: number // Room ID
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
   @ApiProperty({
     description: 'The start date of the booking',
     example: '2027-12-24T00:00:00.000Z'
   })
   start_date: Date // Start of the stay (inclusive)
-  @IsDate()
+  @IsDateString()
   @IsNotEmpty()
   @ApiProperty({
     description: 'The end date of the booking',
