@@ -170,6 +170,58 @@ app-1    | Time:        3.074 s
 app-1    | Ran all test suites.
 ```
 
+for e2e run npm run test:e2e
+```
+ PASS  test/search.e2e-spec.ts
+ PASS  test/notifications.e2e-spec.ts
+ PASS  test/app.e2e-spec.ts
+[Nest] 43913  - 04/24/2026, 12:51:10 PM   ERROR [RoomsService] Failed to update room 999999: Room with id 999999 not found
+ PASS  test/rooms.e2e-spec.ts (5.202 s)
+[Nest] 43911  - 04/24/2026, 12:51:10 PM   ERROR [AuthService] NotAcceptableException: Duplicate username
+    at AuthService.register (/Users/rcpearl/Documents/GitHub/backend-final-project-group-10/nest-prisma-lab/src/auth/auth.service.ts:17:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at AuthController.register (/Users/rcpearl/Documents/GitHub/backend-final-project-group-10/nest-prisma-lab/src/auth/auth.controller.ts:25:12) {
+  response: {
+    message: 'Duplicate username',
+    error: 'Not Acceptable',
+    statusCode: 406
+  },
+  status: 406,
+  options: {}
+}
+[Nest] 43911  - 04/24/2026, 12:51:11 PM   ERROR [AuthService] UnauthorizedException: Incorrect Password
+    at AuthService.login (/Users/rcpearl/Documents/GitHub/backend-final-project-group-10/nest-prisma-lab/src/auth/auth.service.ts:33:18)
+    at AuthController.login (/Users/rcpearl/Documents/GitHub/backend-final-project-group-10/nest-prisma-lab/src/auth/auth.controller.ts:45:12) {
+  response: {
+    message: 'Incorrect Password',
+    error: 'Unauthorized',
+    statusCode: 401
+  },
+  status: 401,
+  options: {}
+}
+[Nest] 43911  - 04/24/2026, 12:51:11 PM   ERROR [AuthService] NotFoundException: User Not Found
+    at AuthService.login (/Users/rcpearl/Documents/GitHub/backend-final-project-group-10/nest-prisma-lab/src/auth/auth.service.ts:27:24)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at AuthController.login (/Users/rcpearl/Documents/GitHub/backend-final-project-group-10/nest-prisma-lab/src/auth/auth.controller.ts:45:12) {
+  response: {
+    message: 'User Not Found',
+    error: 'Not Found',
+    statusCode: 404
+  },
+  status: 404,
+  options: {}
+}
+ PASS  test/auth.e2e-spec.ts (6.246 s)
+ PASS  test/booking.e2e-spec.ts (6.782 s)
+
+Test Suites: 6 passed, 6 total
+Tests:       30 passed, 30 total
+Snapshots:   0 total
+Time:        7.576 s
+Ran all test suites.
+```
+
 # Contribution Guide
 
 Make a new fork and open a new pull request every time you add a new feature with a `feat/...` name.
