@@ -171,6 +171,7 @@ app-1    | Ran all test suites.
 ```
 
 for e2e run npm run test:e2e
+```
  PASS  test/search.e2e-spec.ts
  PASS  test/notifications.e2e-spec.ts
  PASS  test/app.e2e-spec.ts
@@ -219,6 +220,7 @@ Tests:       30 passed, 30 total
 Snapshots:   0 total
 Time:        7.576 s
 Ran all test suites.
+```
 
 # Contribution Guide
 
